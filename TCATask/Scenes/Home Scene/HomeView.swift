@@ -6,38 +6,53 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 struct HomeView: View {
-    @State var models: [Giveaway]
-    @State var selectedGener: GameGenere = .all
+    @Bindable var store: StoreOf<HomeFeature>
+
     var body: some View {
-        NavigationView {
-//            Spacer()
+        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             ScrollView(.vertical) {
-                VStack {
+                LazyVStack {
+                    WelcomeView(title: "Explore Games Giveaways",
+                                userName: "Ayman",
+                                userImage: "figure.run")
                     Spacer(minLength: .init(10))
-                    BannerView(giveaways: models)
+                    BannerView(giveaways: store.banners)
                     Spacer()
-                    TabsView(tabs: GameGenere.allCases, currentSelection: .all) { item in
-                        print("************", item)
+                    TabsView<Platform>(tabs: Platform.allCases, currentSelection: .all) { item in
+                        store.send(.fetchGiveaways(platform: item))
                     }
-                    ForEach(models) { model in
-                        GiveawayCardView(model: model)
+                    ForEach(store.giveaways) { giveaway in
+                        NavigationLink(state: GiveawayDetailsFeature.State(giveaway: giveaway)) {
+                            GiveawayCardView(model: giveaway) {
+                                store.send(.likeButtonTapped(model: giveaway))
+                            }
+                        }
+                        .listRowBackground(Color.clear)
                     }
                     .frame(width: 350, height: 350)
                     .padding(.top, 10)
+                    
                 }
                 Spacer()
                     .background(.red)
             }
-            .navigationTitle("Testing")
+        } destination: { store in
+            GiveawayDetailsView(store: store)
         }
-    }
-    func updateGeneres() {
-        print("CURRENT GENERE FROM PARENT: ", selectedGener)
+        .navigationBarHidden(true)
+        .onAppear(perform: {
+            store.send(.fetchBanners)
+            store.send(.fetchGiveaways(platform: .all))
+            
+        })
     }
 }
 
 #Preview {
-    HomeView(models: Giveaway.samples)
+    HomeView(store: Store(initialState: HomeFeature.State()) {
+        HomeFeature()
+    })
 }

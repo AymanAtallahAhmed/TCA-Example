@@ -8,13 +8,17 @@
 import SwiftUI
 
 struct BannerCardView: View {
-    @State var model: Gaveway
+    @State var model: Giveaway
     var body: some View {
         ZStack {
-            Image(model.image ?? "")
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(.blue)
+            CachedAsyncImage(url: URL(string: model.image ?? ""), content: { imagePhase in
+                if case .success(let image) = imagePhase {
+                    image
+                        .resizable()
+                        .shadow(radius: 10, y: 10)
+                }
+            })
+
             Color.init(red: 0, green: 0, blue: 0, opacity: 0.5)
             VStack(alignment: .leading) {
                 Text(model.title!)
@@ -25,10 +29,9 @@ struct BannerCardView: View {
                     .foregroundStyle(.white)
                     .font(.system(size: 16, weight: .medium))
             }
-//            .background(.green)
-            .padding()
+            .padding(10)
         }
-        
+        .cornerRadius(15)
     }
 }
 

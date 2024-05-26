@@ -15,7 +15,7 @@ protocol StretchyHeaderViewDelegate {
 struct StretchyHeaderView: View {
     var giveaway: Giveaway
     var delegate: StretchyHeaderViewDelegate?
-//    @State var isLiked: Bool = false
+
     var body: some View {
         GeometryReader { proxy in
             let frame = proxy.frame(in: .global)
@@ -40,7 +40,6 @@ struct StretchyHeaderView: View {
                         Spacer()
                         Button(action: {
                             delegate?.likeButtonDidTap(model: giveaway)
-//                            isLiked.toggle()
                         }, label: {
                             Image(systemName: giveaway.isLiked ?? false ? "heart.fill" : "heart")
                                 .font(.title)

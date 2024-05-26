@@ -5,31 +5,50 @@
 //  Created by Ayman Atallah on 26/05/2024.
 //
 
+import ComposableArchitecture
 import XCTest
+@testable import TCATask
 
 final class HomeFeatureTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
+    @MainActor
+    func testFetchingGiveaways() async {
+        let store = TestStore(initialState: HomeFeature.State()) {
+            HomeFeature()
+        } withDependencies: { dependency in
+            dependency.giveawaysRepo.fetchGiveaways = { _ in
+                return Giveaway.samples
+            }
+        }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
+        store.exhaustivity = .off
+        await store.send(.fetchGiveaways(platform: .all)) {
+            $0.isLoading = true
+        }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+        await store.receive(\.giveawaysResponse) {
+            $0.isLoading = false
         }
     }
 
+    @MainActor
+    func testFetchingBanners() async {
+        let store = TestStore(initialState: HomeFeature.State()) {
+            HomeFeature()
+        } withDependencies: { dependency in
+            dependency.bannersRepo.fetchBanners = {
+                return Giveaway.samples
+            }
+        }
+
+        store.exhaustivity = .off
+        await store.send(.fetchBanners) {
+            $0.isLoading = true
+        }
+
+        await store.receive(\.bannersResponse) {
+            $0.isLoading = false
+            $0.banners = Giveaway.samples
+        }
+    }
 }

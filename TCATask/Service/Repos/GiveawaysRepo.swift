@@ -11,11 +11,6 @@ import ComposableArchitecture
 struct GiveawaysRepo {
     private static let apiClient: GiveawayAPIClient = .init(networkManager: .init())
     var fetchGiveaways: (Platform) async throws -> [Giveaway]
-
-//    init(fetchGiveaways: @escaping (Platform) async throws -> [Giveaway]) {
-//        self.fetchGiveaways = fetchGiveaways
-//    }
-
 }
 
 extension GiveawaysRepo: DependencyKey {
