@@ -1,14 +1,13 @@
 //
-//  TCATaskTests.swift
+//  HomeFeatureTests.swift
 //  TCATaskTests
 //
-//  Created by Ayman Atallah on 17/05/2024.
+//  Created by Ayman Atallah on 26/05/2024.
 //
 
 import XCTest
-@testable import TCATask
 
-final class TCATaskTests: XCTestCase {
+final class HomeFeatureTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
