@@ -12,6 +12,10 @@ struct GiveawayDetailsFeature {
     @ObservableState
     struct State: Equatable {
         var giveaway: Giveaway
+
+        init(giveaway: Giveaway) {
+            self.giveaway = giveaway
+        }
     }
 
     enum Action {
